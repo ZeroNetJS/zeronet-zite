@@ -1,39 +1,39 @@
-"use strict"
+'use strict'
 
-//const cache = require("pull-cache")
-const pull = require("pull-stream")
-//const queue = require("pull-queue")
+// const cache = require("pull-cache")
+const pull = require('pull-stream')
+// const queue = require("pull-queue")
 
-const FileStream = require("zeronet-zite/lib/file/stream")
+const FileStream = require('../file/stream')
 
-function QueueItem(zite, info) {
+function QueueItem (zite, info) {
   info.site = zite.address
   return pull(
     zite.peerStream(),
     FileStream(info)
-    //cache TODO: fix caching
+    // cache TODO: fix caching
   )
 }
 
-module.exports = function Queue(zite) {
+module.exports = function Queue (zite) {
   const self = this
   const tree = zite.tree
 
   let queue = {}
   let items = []
 
-  function get(url) {
+  function get (url) {
     return queue[url]
   }
 
-  self.inQueue = url => !!get(url)
+  self.inQueue = url => Boolean(get(url))
 
-  self.start = cb => cb() //TODO: add
-  self.stop = cb => cb() //TODO: add
+  self.start = cb => cb() // TODO: add
+  self.stop = cb => cb() // TODO: add
 
   self.add = (info, cb) => {
     let url
-    if (typeof info == "string") url = info
+    if (typeof info === 'string') url = info
     else url = info.path
     if (self.inQueue(url)) return cb(null, get(url))
     if (tree.exists(url) || tree.maybeValid(url)) {
@@ -41,6 +41,6 @@ module.exports = function Queue(zite) {
       queue[url] = item
       items.push(item)
       cb(null, item)
-    } else cb(new Error("ENOTFOUND: " + url))
+    } else cb(new Error('ENOTFOUND: ' + url))
   }
 }

@@ -1,26 +1,26 @@
-"use strict"
+'use strict'
 
-const pull = require("pull-stream")
-const cache = require("../file/part-stream").multiplexer
+const pull = require('pull-stream')
+const cache = require('../file/part-stream').multiplexer
 
-const debug = require("debug")
+const debug = require('debug')
 
-const sourceStream = require("./source-stream")
-const stream = require("./util")
+const sourceStream = require('./source-stream')
+const stream = require('./util')
 
 module.exports = class PeerStream {
-  constructor(zite) {
+  constructor (zite) {
     this.address = zite.address
     this.zite = zite
-    const log = this.log = process.env.INTENSE_DEBUG ? debug("zeronet:zite:peer-stream:zite:" + zite.address) : () => {}
+    const log = this.log = process.env.INTENSE_DEBUG ? debug('zeronet:zite:peer-stream:zite:' + zite.address) : () => {}
 
     zite.peerStream = this.peerStream.bind(this)
     zite.peerStream.stream = this
 
-    log("creating")
+    log('creating')
   }
 
-  createSourceStream(hasGetter) {
+  createSourceStream (hasGetter) {
     return pull(
       sourceStream(this.zite),
       stream.dialStream(),
@@ -28,7 +28,7 @@ module.exports = class PeerStream {
     )
   }
 
-  cachedSourceStream() {
+  cachedSourceStream () {
     const cacher = cache(
       this.cachedSource ? this.cachedSource : (this.cachedSource = this.createSourceStream(true)))
     return () => pull(
@@ -37,15 +37,15 @@ module.exports = class PeerStream {
     )
   }
 
-  getStream() {
+  getStream () {
     this.cache = this.cache ? this.cache : (this.cache = this.cachedSourceStream())
     return this.cache()
   }
 
-  peerStream() {
-    /*return pull( //TODO: fix structure and add this
+  peerStream () {
+    /* return pull( //TODO: fix structure and add this
       stream.roundRobin(1000, this.getCachedSource(), this.createSourceStream())
-    )*/
+    ) */
     return this.getStream()
   }
 }

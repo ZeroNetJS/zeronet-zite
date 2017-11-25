@@ -1,37 +1,38 @@
-"use strict"
+'use strict'
 
-const pull = require("pull-stream")
+const pull = require('pull-stream')
 
-const verify = require("zeronet-common/lib/verify")
-const Nonces = require("zeronet-common/lib/nonce")
+const verify = require('zeronet-common/lib/verify')
+const Nonces = require('zeronet-common/lib/nonce')
 
-const Pool = require("zeronet-common/lib/peer/pool").ZitePool
-const Queue = require("zeronet-zite/lib/queue")
-const Tree = require("zeronet-zite/lib/tree")
-const PeerStream = require("zeronet-zite/lib/peer-stream")
+const Pool = require('zeronet-common/lib/peer/pool').ZitePool
+const Queue = require('./queue')
+const Tree = require('./tree')
+const PeerStream = require('./peer-stream')
 
-const series = require("async/series")
-const each = require("async/each")
+const series = require('async/series')
+const each = require('async/each')
 
-const Discovery = require("zeronet-zite/lib/discovery")
-const Dtracker = require("zeronet-zite/lib/discovery/tracker")
-const Dpex = require("zeronet-zite/lib/discovery/pex")
-const Ddht = require("zeronet-zite/lib/discovery/dht")
+const Discovery = require('./discovery')
+const Dtracker = require('./discovery/tracker')
+const Dpex = require('./discovery/pex')
+const Ddht = require('./discovery/dht')
 
-const JSONStream = require("zeronet-zite/lib/file/json")
+const JSONStream = require('./file/json')
 
 /**
  * ZeroNet Zite
  * @param {object} config - configuration of the Zite
- * @param {ZeroNetNode} zeronet - ZeroNet Node
+ * @param {ZeroNetNode} node - ZeroNet Node
  * @namespace Zite
  * @constructor
  */
-module.exports = function Zite(config, node) { //describes a single zite
+const Zite = module.exports = function Zite (config, node) { // describes a single zite
   const self = this
 
-  if (!verify.verifyAddress(config.address))
-    throw new Error("Invalid address")
+  if (!verify.verifyAddress(config.address)) {
+    throw new Error('Invalid address')
+  }
 
   if (!config.wrapper_key) config.wrapper_key = verify.genNonce()
 
@@ -58,22 +59,22 @@ module.exports = function Zite(config, node) { //describes a single zite
   const queue = self.queue = new Queue(self, node)
   tree.attach(node.storage)
   const fs = self.fs = tree.fs
-  new PeerStream(self)
+  new PeerStream(self) // eslint-disable-line no-new
 
   /* App */
 
-  /*function handleGet(req, res, next) {
+  /* function handleGet(req, res, next) {
     //const path=req.url
-  }*/
+  } */
 
-  function liftOff(cb) { //...and the zite is downloading
-    if (tree.get("content.json").dummy) {
-      fs.getFile("content.json", (err, stream) => { //load the content json first time
+  function liftOff (cb) { // ...and the zite is downloading
+    if (tree.get('content.json').dummy) {
+      fs.getFile('content.json', (err, stream) => { // load the content json first time
         if (err) return cb(err)
         pull(
           stream,
           JSONStream.parse(),
-          pull.drain(data => tree.handleContentJSON("content.json", data) && cb())
+          pull.drain(data => tree.handleContentJSON('content.json', data) && cb())
         )
       })
     } else {
@@ -96,9 +97,9 @@ module.exports = function Zite(config, node) { //describes a single zite
           pull.through(() => {}, e => {
             if (e) return console.error(e)
             i.version = i.authority.version
-            node.logger("node")("Downloaded %s", i.path)
+            node.logger('node')('Downloaded %s', i.path)
           }),
-          tree.storage.writeStream(tree.zite.address, 0, i.path.replace(/^\//, ""))
+          tree.storage.writeStream(tree.zite.address, 0, i.path.replace(/^\//, ''))
         )
       })
     }, err => err ? console.error(err) : null)
@@ -133,4 +134,4 @@ module.exports = function Zite(config, node) { //describes a single zite
 
 module.exports.fromJSON = zeronet =>
   (data, cb) =>
-  cb(null, new module.exports(data, zeronet))
+    cb(null, new Zite(data, zeronet))

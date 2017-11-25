@@ -1,6 +1,6 @@
-"use strict"
+'use strict'
 
-module.exports = function Pex() {
+module.exports = function Pex () {
   const self = this
 
   self.isAvailable = false

@@ -1,20 +1,20 @@
-"use strict"
+'use strict'
 
-const each = require("async/each")
-const Zite = require("zeronet-zite")
+const each = require('async/each')
+const Zite = require('.')
 
-module.exports = function ZiteManager(zeronet) {
+module.exports = function ZiteManager (zeronet) {
   const self = this
 
-  const log = zeronet.logger("zites")
+  const log = zeronet.logger('zites')
 
   self.zites = {}
 
   self.add = (address, zite) => {
-    if (self.zites[address]) throw new Error("Tried duplicate adding " + address)
+    if (self.zites[address]) throw new Error('Tried duplicate adding ' + address)
     log({
       address
-    }, "Seeding %s", address)
+    }, 'Seeding %s', address)
     self.zites[address] = zite
   }
 
@@ -29,8 +29,9 @@ module.exports = function ZiteManager(zeronet) {
 
   self.toJSON = () => {
     let res = []
-    for (var z in self.zites)
+    for (var z in self.zites) {
       res.push(self.zites[z].toJSON())
+    }
     return res
   }
 }

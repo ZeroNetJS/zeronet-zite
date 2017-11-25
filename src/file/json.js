@@ -1,14 +1,14 @@
-"use strict"
+'use strict'
 
-const queue = require("pull-queue")
-const crypto = require("zeronet-crypto")
+const queue = require('pull-queue')
+const crypto = require('zeronet-crypto')
 
-module.exports.parse = function JSONParseStream() {
-  let d = ""
+module.exports.parse = function JSONParseStream () {
+  let d = ''
   return queue(function (end, data, cb) {
     if (end) {
       if (!d) return cb(end)
-      try { //just send the error
+      try { // just send the error
         JSON.parse(d)
       } catch (e) {
         return cb(e)
@@ -21,14 +21,14 @@ module.exports.parse = function JSONParseStream() {
     } catch (e) {
       return cb()
     }
-    d = ""
+    d = ''
     cb(null, r)
   })
 }
 
-module.exports.stringify = function JSONStringifyStream() {
+module.exports.stringify = function JSONStringifyStream () {
   return function (read, next) {
-    //return a readable function!
+    // return a readable function!
     return function (end, cb) {
       read(end, function (end, data) {
         cb(end, data != null ? next(JSON.stringify(data)) : null)
@@ -37,9 +37,9 @@ module.exports.stringify = function JSONStringifyStream() {
   }
 }
 
-module.exports.crypto = function JSONStringifyCryptovalidStream() {
+module.exports.crypto = function JSONStringifyCryptovalidStream () {
   return function (read, next) {
-    //return a readable function!
+    // return a readable function!
     return function (end, cb) {
       read(end, function (end, data) {
         cb(end, data != null ? next(crypto.JSONBlock(data)) : null)

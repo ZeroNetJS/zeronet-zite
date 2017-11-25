@@ -1,26 +1,25 @@
-"use strict"
+'use strict'
 
-const queue = require("pull-queue")
-const assert = require("assert")
-const debug = require("debug")
-const log = debug("zeronet:zite:file-stream")
-const pull = require("pull-stream")
-const crypto = require("crypto")
+const queue = require('pull-queue')
+const assert = require('assert')
+const debug = require('debug')
+const log = debug('zeronet:zite:file-stream')
+const pull = require('pull-stream')
+const crypto = require('crypto')
 
-module.exports = function FileStream(data) {
-
+module.exports = function FileStream (data) {
   let info = data
   let cur = 0
 
-  assert(data, "no data given")
-  assert(data.site, "no site given")
-  assert(data.path, "no path given")
-  assert(!(!data.path.endsWith("/content.json") && data.path != "content.json" && !data.hash), "not verifiable")
+  assert(data, 'no data given')
+  assert(data.site, 'no site given')
+  assert(data.path, 'no path given')
+  assert(!(!data.path.endsWith('/content.json') && data.path !== 'content.json' && !data.hash), 'not verifiable')
 
-  let dlpath = data.path + "@" + data.site
+  let dlpath = data.path + '@' + data.site
   let othersize = 0
 
-  log("init", dlpath, info)
+  log('init', dlpath, info)
 
   let sendErr = false
 
@@ -29,38 +28,38 @@ module.exports = function FileStream(data) {
 
     if (sendErr) return cb(sendErr)
 
-    log("try peer", dlpath, peer.multiaddr)
+    log('try peer', dlpath, peer.multiaddr)
 
     let chunks = []
 
-    function finishLoop(err) {
+    function finishLoop (err) {
       return cb(err, chunks)
     }
 
-    function loop() {
-      if (cur >= info.size) return finishLoop(true, log("finished", dlpath, cur))
+    function loop () {
+      if (cur >= info.size) return finishLoop(true, log('finished', dlpath, cur))
       let args = {
         site: data.site,
         location: cur,
-        inner_path: data.path,
+        inner_path: data.path
       }
       if (info.size) args.file_size = info.size
-      peer.cmd("getFile", args, function (err, res) {
+      peer.cmd('getFile', args, function (err, res) {
         if (err) {
           peer.score -= 20
-          return finishLoop() //goto: next
+          return finishLoop() // goto: next
         }
         if (!res.body.length) {
           if (!info.size) return finishLoop()
           othersize++
-          if (othersize == 2) {
-            return finishLoop(new Error("Other size"))
+          if (othersize === 2) {
+            return finishLoop(new Error('Other size'))
           }
           return finishLoop()
         }
         if (!info.size) info.size = res.size
         cur += res.body.length
-        log("downloaded", dlpath, cur, info.size)
+        log('downloaded', dlpath, cur, info.size)
         chunks.push(res.body)
         return loop()
       })
@@ -76,9 +75,9 @@ module.exports = function FileStream(data) {
     let vsize = 0
     let vchunks = []
     let vended = false
-    let hash = crypto.createHash("sha512")
+    let hash = crypto.createHash('sha512')
 
-    verifyStream = queue(function (end, data, cb) { //the verify stream queues up the data until the hash matches OR returns an error if hash != validHash and size >= fileSize
+    verifyStream = queue(function (end, data, cb) { // the verify stream queues up the data until the hash matches OR returns an error if hash !== validHash and size >= fileSize
       if (end) return cb(end)
       if (vended) return cb(vended)
 
@@ -88,11 +87,11 @@ module.exports = function FileStream(data) {
       hash.update(data)
 
       if (vsize >= info.size && info.size) {
-        const finalHash = hash.digest("hex").substr(0, 64) //lower security level
+        const finalHash = hash.digest('hex').substr(0, 64) // lower security level
         vended = true
-        if (finalHash != info.hash) {
+        if (finalHash !== info.hash) {
           vchunks = null
-          return cb(new Error("Hash error " + finalHash + " != " + info.hash))
+          return cb(new Error('Hash error ' + finalHash + ' !== ' + info.hash))
         } else {
           return cb(null, vchunks)
         }

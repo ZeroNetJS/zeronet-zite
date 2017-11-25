@@ -1,6 +1,6 @@
-"use strict"
+'use strict'
 
-module.exports = function DHT() {
+module.exports = function DHT () {
   const self = this
 
   self.isAvailable = false

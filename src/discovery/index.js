@@ -1,13 +1,13 @@
-"use strict"
+'use strict'
 
-const each = require("async/each")
+const each = require('async/each')
 
 const EE = require('events').EventEmitter
-const util = require("util")
-const debug = require("debug")
-const log = debug("zeronet:zite:discovery")
+const util = require('util')
+const debug = require('debug')
+const log = debug('zeronet:zite:discovery')
 
-function Discovery(zite, node, types) {
+function Discovery (zite, node, types) {
   /**
     @namespace Discovery
     @constructor
@@ -18,39 +18,39 @@ function Discovery(zite, node, types) {
   let queuedDiscover = false
   let lastDiscover = 0
 
-  self.methods = types.map(t => new t(zite, node, self)).filter(t => t.isAvailable)
-  log("creating discovery with %s available method(s)", self.methods.length)
+  self.methods = types.map(T => new T(zite, node, self)).filter(t => t.isAvailable)
+  log('creating discovery with %s available method(s)', self.methods.length)
   let isRunning = self.isRunning = false
-  self.start = cb => isRunning ? cb(new Error("Already running")) : each(self.methods, (t, cb) => t.start(cb), err => err ? cb(err) : cb(null, isRunning = true))
-  self.stop = cb => !isRunning ? cb(new Error("Not running")) : each(self.methods, (t, cb) => t.stop(cb), err => err ? cb(err) : cb(null, isRunning = false))
+  self.start = cb => isRunning ? cb(new Error('Already running')) : each(self.methods, (t, cb) => t.start(cb), err => err ? cb(err) : cb(null, (isRunning = true)))
+  self.stop = cb => !isRunning ? cb(new Error('Not running')) : each(self.methods, (t, cb) => t.stop(cb), err => err ? cb(err) : cb(null, (isRunning = false)))
   self.discover = force => {
     if (!force) {
-      if (!isRunning) throw new Error("Not running")
-      if (discovering) return (queuedDiscover = true) && log("queued discover")
+      if (!isRunning) throw new Error('Not running')
+      if (discovering) return (queuedDiscover = true) && log('queued discover')
       if (lastDiscover + 10 * 1000 > new Date().getTime()) {
         discovering = true
-        log("paused discover for %s ms", lastDiscover + 10 * 1000 - new Date().getTime())
+        log('paused discover for %s ms', lastDiscover + 10 * 1000 - new Date().getTime())
         setTimeout(self.discover, lastDiscover + 10 * 1000 - new Date().getTime(), true)
         return
       }
     }
-    log("discovery")
+    log('discovery')
     discovering = true
     lastDiscover = new Date().getTime()
     each(self.methods, (t, cb) => t.discover(cb), err => {
       if (err) log(err)
       discovering = false
-      log("discover done")
-      self.emit("discover", err)
+      log('discover done')
+      self.emit('discover', err)
       if (queuedDiscover) {
         queuedDiscover = false
-        log("executing queued discovery")
+        log('executing queued discovery')
         self.discover()
       }
     })
   }
   self.discoverCB = cb => {
-    self.once("discover", cb)
+    self.once('discover', cb)
     self.discover()
   }
   self.peer = addr => {

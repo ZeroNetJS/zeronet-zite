@@ -1,9 +1,9 @@
-"use strict"
+'use strict'
 
-const pull = require("pull-stream")
-const Getters = require("zeronet-common/lib/peer/pool-getters")
-const stream = require("./util")
-const paramap = require("pull-paramap")
+const pull = require('pull-stream')
+const Getters = require('zeronet-common/lib/peer/pool-getters')
+const stream = require('./util')
+const paramap = require('pull-paramap')
 
 const getter2stream = getters => {
   const getter = new Getters.MetaGetter(getters)
