@@ -30,7 +30,9 @@
   },
   "homepage": "https://github.com/ZeroNetJS/zeronet-js#readme",
   "directories": {
-    "lib": "lib"
+    "test": "test",
+    "src": "src",
+    "lib": "src"
   },
   "dependencies": {
     "async": "^2.6.0",
@@ -44,5 +46,8 @@
     "zeronet-common": "file:../zeronet-common",
     "zeronet-crypto": "file:../zeronet-crypto",
     "zeronet-fallaby": "file:../zeronet-fallaby"
+  },
+  "devDependencies": {
+    "aegir": "^12.2.0"
   }
 }
