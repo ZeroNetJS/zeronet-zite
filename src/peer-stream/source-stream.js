@@ -1,7 +1,7 @@
 'use strict'
 
 const pull = require('pull-stream')
-const Getters = require('zeronet-common/lib/peer/pool-getters')
+const Getters = require('zeronet-common/src/peer/pool-getters')
 const stream = require('./util')
 const paramap = require('pull-paramap')
 

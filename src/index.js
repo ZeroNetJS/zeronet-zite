@@ -2,10 +2,10 @@
 
 const pull = require('pull-stream')
 
-const verify = require('zeronet-common/lib/verify')
-const Nonces = require('zeronet-common/lib/nonce')
+const verify = require('zeronet-common/src/verify')
+const Nonces = require('zeronet-common/src/nonce')
 
-const Pool = require('zeronet-common/lib/peer/pool').ZitePool
+const Pool = require('zeronet-common/src/peer/pool').ZitePool
 const Queue = require('./queue')
 const Tree = require('./tree')
 const PeerStream = require('./peer-stream')
