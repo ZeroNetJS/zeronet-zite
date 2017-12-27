@@ -28,7 +28,7 @@ module.exports = function ContentJSON (zite, innerPath, data) {
     */
     const {
       signs,
-      signers_sign
+      signers_sign // eslint-disable-line camelcase
     } = data
 
     delete data.sign
