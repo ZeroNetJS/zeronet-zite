@@ -2,7 +2,7 @@
 
 const pull = require('pull-stream')
 const defer = require('pull-defer')
-const tbridge = require('zeronet-client/src/stream/bridge').through
+const tbridge = require('./_bridge').through
 
 module.exports = function ZiteFS (zite, storage, tree) {
   const self = this
