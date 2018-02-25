@@ -34,11 +34,11 @@ module.exports = function ContentJSON (zite, innerPath, data) {
     delete data.sign
     delete data.signs
 
-    const real = crypto.PythonJSONDump(data) // the data that was actually signed
+    const real = crypto.json.dump(data) // the data that was actually signed
 
     const vs = rules.signs.getValidKeys() // GetValidSigners(address, innerPath, data) //valid signers
     const signsRequired = rules.signs.getSignsRequired()
-    const signersSignData = crypto.GetSigners(vs, signsRequired) // construct signers_sign data from what we were given
+    const signersSignData = crypto.key.GetSigners(vs, signsRequired) // construct signers_sign data from what we were given
 
     // these 2 functions throw on failure. no need for if checks
     rules.signers_sign.verifyManyToOne(signersSignData, signers_sign)
