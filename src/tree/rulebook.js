@@ -148,7 +148,7 @@ function RuleBook (opt) {
   self.getValidKeys = () => self.validKeys
 
   self.verifyManyToOne = (data, sig) => { // many keys can sign, only one signed
-    return Boolean(self.getValidKeys().filter(adr => crypto.VerifySig(adr, data, sig)).length)
+    return Boolean(self.getValidKeys().filter(adr => crypto.key.verify(adr, data, sig)).length)
   }
 
   self.verifyManyToMany = (data, signs) => { // many keys can sign, one/many need to sign. signs is a adr=>sign object
@@ -159,7 +159,7 @@ function RuleBook (opt) {
       }
     })
     if (sigs.length < self.getSignsRequired()) throw new Error(sigs.length + ' signatures found but ' + self.getSignsRequired() + ' is/are needed')
-    const vsigs = sigs.filter(sig => crypto.VerifySig(sig.adr, data, sig.sign))
+    const vsigs = sigs.filter(sig => crypto.key.verify(sig.adr, data, sig.sign))
     if (vsigs.length < self.getSignsRequired()) throw new Error(vsigs.length + ' valid signatures out of ' + sigs.length + ' found but ' + self.getSignsRequired() + ' is/are needed')
     return true
   }

@@ -38,20 +38,19 @@
     "async": "^2.6.0",
     "hypercache": "~0.2.0",
     "ip": "^1.1.5",
-    "peer-info": "~0.11.4",
+    "peer-info": "~0.11.6",
     "pull-cache": "0.0.0",
     "pull-defer": "~0.2.2",
     "pull-paramap": "^1.2.2",
     "pull-queue": "~0.1.4",
-    "pull-stream": "^3.6.1",
-    "uuid": "^3.1.0",
-    "zeronet-client": "~0.3.5",
+    "pull-stream": "^3.6.2",
+    "uuid": "^3.2.1",
     "zeronet-common": "~0.3.0",
-    "zeronet-crypto": "~0.1.0",
+    "zeronet-crypto": "~0.2.1",
     "zeronet-fallaby": "0.0.2"
   },
   "devDependencies": {
-    "aegir": "^12.3.0"
+    "aegir": "^13.0.5"
   },
   "contributors": [
     "kustomzone <github@kustomzone.com>",
