@@ -38,7 +38,7 @@
     "async": "^2.6.0",
     "hypercache": "~0.2.0",
     "ip": "^1.1.5",
-    "peer-info": "~0.11.6",
+    "peer-info": "~0.15.0",
     "pull-cache": "0.0.0",
     "pull-defer": "~0.2.2",
     "pull-paramap": "^1.2.2",
